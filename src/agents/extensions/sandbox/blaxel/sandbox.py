@@ -201,13 +201,14 @@ def _blaxel_process_group_termination_command(
     start_polls: int,
 ) -> str:
     return shlex.join(
-        ("python3", "-c", _BLAXEL_PROCESS_GROUP_TERMINATOR, process_token, str(start_polls))
+        ("python3", "-I", "-c", _BLAXEL_PROCESS_GROUP_TERMINATOR, process_token, str(start_polls))
     )
 
 
 def _blaxel_supervised_command(command: Sequence[str | Path]) -> str:
     return shlex.join(
-        ("exec", "python3", "-c", _BLAXEL_PROCESS_SUPERVISOR) + tuple(str(part) for part in command)
+        ("exec", "python3", "-I", "-c", _BLAXEL_PROCESS_SUPERVISOR)
+        + tuple(str(part) for part in command)
     )
 
 
@@ -849,6 +850,7 @@ class BlaxelSandboxSession(BaseSandboxSession):
         command = ("stat", path_arg)
         result = await self.exec(
             "python3",
+            "-I",
             "-c",
             STAT_SCRIPT,
             path_policy.sandbox_root().as_posix(),

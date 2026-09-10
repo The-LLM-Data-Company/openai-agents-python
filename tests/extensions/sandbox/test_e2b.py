@@ -544,14 +544,14 @@ class _FakeE2BCommands:
         )
         parts = shlex.split(command)
         if (
-            len(parts) == 5
-            and parts[:2] == ["python3", "-c"]
-            and parts[2] == e2b_module._E2B_PROCESS_GROUP_TERMINATOR
+            len(parts) == 6
+            and parts[:3] == ["python3", "-I", "-c"]
+            and parts[3] == e2b_module._E2B_PROCESS_GROUP_TERMINATOR
         ):
             self.group_termination_started.set()
             background_handle = None
-            for _ in range(int(parts[4])):
-                background_handle = self.background_tokens.get(parts[3])
+            for _ in range(int(parts[5])):
+                background_handle = self.background_tokens.get(parts[4])
                 if background_handle is not None:
                     break
                 await asyncio.sleep(0)
@@ -1065,7 +1065,7 @@ async def test_e2b_stat_returns_metadata_with_one_routed_exec(
     if expected_size is not None:
         assert result.size == expected_size
     assert len(session.stat_exec_calls) == 1
-    assert session.stat_exec_calls[0][:2] == ("python3", "-c")
+    assert session.stat_exec_calls[0][:3] == ("python3", "-I", "-c")
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="the E2B worker runs on Linux")
@@ -1283,7 +1283,7 @@ async def test_e2b_stat_passes_optional_user_through_provider_exec() -> None:
     assert result.permissions.directory is False
     assert len(sandbox.commands.calls) == 1
     call = sandbox.commands.calls[0]
-    assert shlex.split(str(call["command"]))[:2] == ["python3", "-c"]
+    assert shlex.split(str(call["command"]))[:3] == ["python3", "-I", "-c"]
     assert call["user"] == "runner"
 
 
