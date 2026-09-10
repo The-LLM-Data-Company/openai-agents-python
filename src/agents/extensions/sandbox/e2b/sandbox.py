@@ -205,13 +205,13 @@ def _e2b_process_group_termination_command(
     start_polls: int,
 ) -> str:
     return shlex.join(
-        ("python3", "-c", _E2B_PROCESS_GROUP_TERMINATOR, process_token, str(start_polls))
+        ("python3", "-I", "-c", _E2B_PROCESS_GROUP_TERMINATOR, process_token, str(start_polls))
     )
 
 
 def _e2b_supervised_command(command: Sequence[str | Path]) -> str:
     return shlex.join(
-        ("exec", "setsid", "--", "python3", "-c", _E2B_PROCESS_SUPERVISOR)
+        ("exec", "setsid", "--", "python3", "-I", "-c", _E2B_PROCESS_SUPERVISOR)
         + tuple(str(part) for part in command)
     )
 
@@ -1556,6 +1556,7 @@ class E2BSandboxSession(BaseSandboxSession):
         command = ("stat", path_arg)
         result = await self.exec(
             "python3",
+            "-I",
             "-c",
             STAT_SCRIPT,
             path_policy.sandbox_root().as_posix(),

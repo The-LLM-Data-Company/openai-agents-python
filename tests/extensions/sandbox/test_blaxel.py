@@ -486,7 +486,7 @@ async def test_blaxel_stat_returns_metadata_with_one_routed_exec(
     if expected_size is not None:
         assert result.size == expected_size
     assert len(session.stat_exec_calls) == 1
-    assert session.stat_exec_calls[0][:2] == ("python3", "-c")
+    assert session.stat_exec_calls[0][:3] == ("python3", "-I", "-c")
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="the Blaxel worker runs on Linux")
@@ -591,7 +591,7 @@ async def test_blaxel_stat_passes_optional_user_through_provider_exec(
     assert result is not None
     assert result.kind is EntryKind.OTHER
     config, _kwargs = fake_sandbox.process.exec_calls[-1]
-    assert shlex.split(str(config["command"]))[4:8] == ["sudo", "-u", "runner", "--"]
+    assert shlex.split(str(config["command"]))[5:9] == ["sudo", "-u", "runner", "--"]
 
 
 @pytest.mark.asyncio
